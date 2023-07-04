@@ -4,80 +4,47 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private enum MoveAnimState { idle, running, jumping, falling }
+    // Access
+    private GroundCheck groundCheck;
+    private AnimationState animationState;
 
-    private Animator animator;
-    private Rigidbody2D rb;
-    private BoxCollider2D coll;
-    private SpriteRenderer sprite;
+    [HideInInspector] public Rigidbody2D rb2D;
+    [HideInInspector] public float horizontalInput; // X direction
 
-    private float horizontalInput;
-
-    [SerializeField] private LayerMask jumpGrounded;
+    [Header("Player Value")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
 
-    private void Start()
+    private void Awake()
     {
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
-        coll = GetComponent<BoxCollider2D>();
-        sprite = GetComponent<SpriteRenderer>();
+        rb2D = GetComponent<Rigidbody2D>();
+
+        //Acces 
+        groundCheck = GetComponent<GroundCheck>();
+        animationState = GetComponent<AnimationState>();
     }
     private void Update()
     {
         Move();
         Jump();
-        UpdateAnimationState();
 
+        // Animation State 
+        animationState.UpdateAnimationState();
     }
 
     private void Move()
     {
         // We move the character in the X direction
         horizontalInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        rb2D.velocity = new Vector2(horizontalInput * moveSpeed, rb2D.velocity.y);
     }
     private void Jump()
-    {    
-        // Character Jump 
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        }
-    }
-    private void UpdateAnimationState()
     {
-        MoveAnimState state;
-
-        if (horizontalInput > 0 || horizontalInput < 0)
-        {   
-            // Running Animation
-            sprite.flipX = horizontalInput < 0 ? true : false;
-            state = MoveAnimState.running;
-        }
-        else
-        {   // Idle Animation
-            state = MoveAnimState.idle;
-        }
-
-        if (rb.velocity.y > .1f)
-        {    
-            // Jump Animation
-            state = MoveAnimState.jumping;
-        }
-        else if (rb.velocity.y < -.1f)
+        // Character Jump 
+        if (Input.GetKeyDown(KeyCode.Space) && groundCheck.IsGrounded())
         {
-            // Fall Animation
-            state = MoveAnimState.falling;
+            rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce);
         }
-
-        animator.SetInteger("State", (int)state);
     }
 
-    private bool IsGrounded()
-    {   
-        // We check if the character touches the ground
-        return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down, .1f, jumpGrounded);
-    }
 }
