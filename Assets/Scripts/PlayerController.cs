@@ -6,9 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     // Access
     private GroundCheck groundCheck;
-    private AnimationState animationState;
+    private PlayerShoot playerShoot;
+    private SpriteRenderer sprite;
+    private Animator animator;
 
-    [HideInInspector] public Rigidbody2D rb2D;
+    private Rigidbody2D rb2D;
     [HideInInspector] public float horizontalInput; // X direction
 
     [Header("Player Value")]
@@ -18,18 +20,18 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
+        sprite = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
 
         //Acces 
         groundCheck = GetComponent<GroundCheck>();
-        animationState = GetComponent<AnimationState>();
+        playerShoot = GetComponent<PlayerShoot>();
     }
     private void Update()
     {
         Move();
         Jump();
-
-        // Animation State 
-        animationState.UpdateAnimationState();
+        CheckFall();
     }
 
     private void Move()
@@ -37,7 +39,19 @@ public class PlayerController : MonoBehaviour
         // We move the character in the X direction
         horizontalInput = Input.GetAxis("Horizontal");
         rb2D.velocity = new Vector2(horizontalInput * moveSpeed, rb2D.velocity.y);
+
+        if (horizontalInput > 0 || horizontalInput < 0)
+        {
+            // Sprite left and right  move
+            sprite.flipX = horizontalInput < 0 ? true : false;
+            animator.SetBool("IsRunning", true);
+        }
+        else
+        {   // Idle Animation
+            animator.SetBool("IsRunning", false);
+        }
     }
+
     private void Jump()
     {
         // Character Jump 
@@ -45,6 +59,32 @@ public class PlayerController : MonoBehaviour
         {
             rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce);
         }
+
+
+        if (rb2D.velocity.y > .1f)
+        {
+            // Jump Animation
+            animator.SetBool("IsJumping", true);
+        }
+        else
+        {
+            animator.SetBool("IsJumping", false);
+        }
+
+    }
+
+    private void CheckFall()
+    {
+        if (rb2D.velocity.y < -.1f)
+        {
+            // Fall Animation
+            animator.SetBool("IsFalling", true);
+        }
+        else
+        {
+            animator.SetBool("IsFalling", false);
+        }
+
     }
 
 }
