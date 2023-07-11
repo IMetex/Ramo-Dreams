@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private float horizontalInput; // X direction
 
     [Header("Player Value")]
-    [SerializeField] private float moveSpeed = 5f;
+    public float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
 
     private void Awake()

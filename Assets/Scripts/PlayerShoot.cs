@@ -7,12 +7,13 @@ public class PlayerShoot : MonoBehaviour
 
     private PlayerController playerController;
     private PlayerBullet bullet;
+    private ObjectPoolling objectPooling;
     private Animator anim;
 
-    //[SerializeField] private ObjectPoolling objectPool = null;
+    [SerializeField] private ObjectPoolling objectPool = null;
     [SerializeField] private PlayerBullet bulletPrefab;
     [SerializeField] private Transform bulletExitPoint;
-    [SerializeField] private float fireCooldown;
+    [SerializeField] private float bulletCooldown;
     private bool isShooting;
     private float direction;
 
@@ -21,18 +22,21 @@ public class PlayerShoot : MonoBehaviour
         anim = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         bullet = FindObjectOfType<PlayerBullet>();
+        objectPooling = FindObjectOfType<ObjectPoolling>();
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && !isShooting)
         {
-
             StartCoroutine(Shoot());
+            //player move speed dorp it
+            playerController.moveSpeed = 2f;
             anim.SetBool("IsShooting", true);
         }
         else
         {
+            playerController.moveSpeed = 5f;
             anim.SetBool("IsShooting", false);
         }
     }
@@ -40,20 +44,25 @@ public class PlayerShoot : MonoBehaviour
     public IEnumerator Shoot()
     {
         isShooting = true;
-
+        
+    
         // Determine the direction based on player's sprite flipX
         direction = playerController.sprite.flipX ? -1f : 1f;
 
         // Calculate the position to instantiate the bullet
         Vector3 bulletPosition = bulletExitPoint.position + new Vector3(direction, 0f, 0f);
-;
 
-        // Instantiate the bullet
-        PlayerBullet bullet = Instantiate(bulletPrefab, bulletPosition, Quaternion.identity);
-        //GameObject obj = objectPool.GetPooledObject();
-        //obj.transform.position = gameObject.transform.position;
+        // Object Pooling 
+        GameObject obj = objectPooling.GetPooledObject();
+        obj.transform.position = bulletPosition;
+        PlayerBullet bullet = obj.GetComponent<PlayerBullet>();
         bullet.SetDirection(direction);
-        yield return new WaitForSeconds(fireCooldown);
+
+        yield return new WaitForSeconds(bulletCooldown);
+        
         isShooting = false;
+
+        // player move old speed
+        playerController.moveSpeed = 5f;
     }
 }
