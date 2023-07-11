@@ -39,13 +39,15 @@ public class PlayerShoot : MonoBehaviour
             playerController.moveSpeed = 5f;
             anim.SetBool("IsShooting", false);
         }
+
+        BulletExitPosition();
     }
 
     public IEnumerator Shoot()
     {
         isShooting = true;
-        
-    
+
+
         // Determine the direction based on player's sprite flipX
         direction = playerController.sprite.flipX ? -1f : 1f;
 
@@ -59,10 +61,22 @@ public class PlayerShoot : MonoBehaviour
         bullet.SetDirection(direction);
 
         yield return new WaitForSeconds(bulletCooldown);
-        
+
         isShooting = false;
 
         // player move old speed
         playerController.moveSpeed = 5f;
+    }
+
+    void BulletExitPosition()
+    {
+        if (direction == -1)
+        {
+            bulletExitPoint.transform.localPosition = new Vector3(-0.13f,-0.28f,0f);
+        }
+        else
+        {
+             bulletExitPoint.transform.localPosition = new Vector3(0.13f,-0.28f,0f);
+        }
     }
 }
