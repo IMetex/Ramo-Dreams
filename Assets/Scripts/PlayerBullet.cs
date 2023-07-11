@@ -4,27 +4,20 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
-    [SerializeField] private float bulletSpeed = 2f;
+    [SerializeField] private float bulletSpeed = 10f;
+    private float direction;
 
-    private PlayerController playerController;
-
-    private void Awake()
+    public void SetDirection(float dir)
     {
-        playerController = GetComponent<PlayerController>();
+        direction = dir;
     }
+
     private void Update()
     {
-        if (playerController != null)
-        {
-            if (playerController.horizontalInput > 0)
-            {
-                transform.Translate(Vector3.right * bulletSpeed * Time.deltaTime);
-            }
-            else
-            {
-                transform.Translate(Vector3.left * bulletSpeed * Time.deltaTime);
-            }
-        }
+        // Move the bullet in the specified direction
+        transform.Translate(Vector2.right * bulletSpeed * direction * Time.deltaTime);
     }
 
 }
+
+

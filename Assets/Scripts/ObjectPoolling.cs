@@ -6,6 +6,7 @@ public class ObjectPoolling : MonoBehaviour
 {
     private Queue<GameObject> pooledObjects;
     [SerializeField] private GameObject objectPrefab;
+    [SerializeField] private Transform firePoint;
     [SerializeField] private int poolSize;
 
 

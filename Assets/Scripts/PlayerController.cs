@@ -6,12 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     // Access
     private GroundCheck groundCheck;
-    private PlayerShoot playerShoot;
-    private SpriteRenderer sprite;
     private Animator animator;
+    [HideInInspector] public SpriteRenderer sprite;
+    [HideInInspector] public Rigidbody2D rb2D;
 
-    private Rigidbody2D rb2D;
-    [HideInInspector] public float horizontalInput; // X direction
+    private float horizontalInput; // X direction
 
     [Header("Player Value")]
     [SerializeField] private float moveSpeed = 5f;
@@ -25,13 +24,13 @@ public class PlayerController : MonoBehaviour
 
         //Acces 
         groundCheck = GetComponent<GroundCheck>();
-        playerShoot = GetComponent<PlayerShoot>();
     }
     private void Update()
     {
         Move();
         Jump();
         CheckFall();
+
     }
 
     private void Move()
