@@ -5,31 +5,37 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Access
+    [HideInInspector] public Rigidbody2D rb2D;
+    [HideInInspector] public SpriteRenderer sprite;
     private GroundCheck groundCheck;
     private Animator animator;
-    [HideInInspector] public SpriteRenderer sprite;
-    [HideInInspector] public Rigidbody2D rb2D;
 
-    private float horizontalInput; // X direction
+    // X direction
+    private float horizontalInput;
+
+
 
     [Header("Player Value")]
     public float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
+
+    [Header("Partical Effect")]
+    [SerializeField] private ParticleSystem dustEffect;
 
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-
-        //Acces 
         groundCheck = GetComponent<GroundCheck>();
     }
     private void Update()
     {
         Move();
         Jump();
-        CheckFall();
+
+        JumpAnimation();
+        CheckFallAnimation();
 
     }
 
@@ -43,6 +49,10 @@ public class PlayerController : MonoBehaviour
         {
             // Sprite left and right  move
             sprite.flipX = horizontalInput < 0 ? true : false;
+
+            CreateDustPartical(); // Partical Effect
+
+            // Run Animation
             animator.SetBool("IsRunning", true);
         }
         else
@@ -55,35 +65,37 @@ public class PlayerController : MonoBehaviour
     {
         // Character Jump 
         if (Input.GetKeyDown(KeyCode.Space) && groundCheck.IsGrounded())
-        {
             rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce);
-        }
+    }
 
-
+    private void JumpAnimation()
+    {
         if (rb2D.velocity.y > .1f)
         {
             // Jump Animation
             animator.SetBool("IsJumping", true);
+            // Partical Effect
+            CreateDustPartical();   
         }
         else
         {
             animator.SetBool("IsJumping", false);
         }
-
     }
 
-    private void CheckFall()
+    private void CheckFallAnimation()
     {
         if (rb2D.velocity.y < -.1f)
-        {
             // Fall Animation
             animator.SetBool("IsFalling", true);
-        }
+        
         else
-        {
             animator.SetBool("IsFalling", false);
-        }
+    }
 
+    private void CreateDustPartical()
+    {
+        dustEffect.Play();
     }
 
 }

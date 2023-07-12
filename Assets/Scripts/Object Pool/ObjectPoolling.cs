@@ -19,6 +19,7 @@ public class ObjectPoolling : MonoBehaviour
             pooledObjects.Enqueue(obj);
         }
     }
+    
     public GameObject GetPooledObject()
     {
         GameObject obj = pooledObjects.Dequeue();

@@ -8,21 +8,35 @@ public class PlayerShoot : MonoBehaviour
     private PlayerController playerController;
     private PlayerBullet bullet;
     private ObjectPoolling objectPooling;
+    private CameraShaker cameraShake;
     private Animator anim;
 
-    [SerializeField] private ObjectPoolling objectPool = null;
+
+    [Header("Bullet Prefab")]
     [SerializeField] private PlayerBullet bulletPrefab;
+
+    [Header("Bullet Exit Point")]
     [SerializeField] private Transform bulletExitPoint;
+
+    [Header("Bullet After Attack Time")]
     [SerializeField] private float bulletCooldown;
+
     private bool isShooting;
     private float direction;
+
+    // Bullet Exit Rotation Change
+    private  const float X_VECTOR = 0.15f;
+    private const float Y_VECTOR = 0.28f;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
+
+        // Access
         bullet = FindObjectOfType<PlayerBullet>();
         objectPooling = FindObjectOfType<ObjectPoolling>();
+        cameraShake = FindObjectOfType<CameraShaker>();
     }
 
     private void Update()
@@ -30,17 +44,24 @@ public class PlayerShoot : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !isShooting)
         {
             StartCoroutine(Shoot());
-            //player move speed dorp it
-            playerController.moveSpeed = 2f;
+            ChangeBulletExitPosition();
+
+            // Camera  settings 
+            cameraShake.CameraShake();
+
+            //player move speed dorp it ... not working fixed
+            playerController.moveSpeed = 0.5f;
+
+            // Shoot animation
             anim.SetBool("IsShooting", true);
         }
         else
         {
             playerController.moveSpeed = 5f;
+            
+            // Shoot animation
             anim.SetBool("IsShooting", false);
-        }
-
-        BulletExitPosition();
+        }  
     }
 
     public IEnumerator Shoot()
@@ -54,7 +75,7 @@ public class PlayerShoot : MonoBehaviour
         // Calculate the position to instantiate the bullet
         Vector3 bulletPosition = bulletExitPoint.position + new Vector3(direction, 0f, 0f);
 
-        // Object Pooling 
+        // Object Pooling Bullet
         GameObject obj = objectPooling.GetPooledObject();
         obj.transform.position = bulletPosition;
         PlayerBullet bullet = obj.GetComponent<PlayerBullet>();
@@ -63,20 +84,15 @@ public class PlayerShoot : MonoBehaviour
         yield return new WaitForSeconds(bulletCooldown);
 
         isShooting = false;
-
-        // player move old speed
-        playerController.moveSpeed = 5f;
     }
 
-    void BulletExitPosition()
+    void ChangeBulletExitPosition()
     {
         if (direction == -1)
-        {
-            bulletExitPoint.transform.localPosition = new Vector3(-0.13f,-0.28f,0f);
-        }
-        else
-        {
-             bulletExitPoint.transform.localPosition = new Vector3(0.13f,-0.28f,0f);
-        }
+            bulletExitPoint.transform.localPosition = new Vector3(-X_VECTOR, -Y_VECTOR, 0f);
+        
+        else      
+            bulletExitPoint.transform.localPosition = new Vector3(X_VECTOR, -Y_VECTOR, 0f);
+    
     }
 }
