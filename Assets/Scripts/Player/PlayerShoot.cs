@@ -25,7 +25,7 @@ public class PlayerShoot : MonoBehaviour
     private float direction;
 
     // Bullet Exit Rotation Change
-    private  const float X_VECTOR = 0.15f;
+    private const float X_VECTOR = 0.15f;
     private const float Y_VECTOR = 0.28f;
 
     private void Awake()
@@ -44,7 +44,6 @@ public class PlayerShoot : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !isShooting)
         {
             StartCoroutine(Shoot());
-            ChangeBulletExitPosition();
 
             // Camera  settings 
             cameraShake.CameraShake();
@@ -58,10 +57,12 @@ public class PlayerShoot : MonoBehaviour
         else
         {
             playerController.moveSpeed = 5f;
-            
+
             // Shoot animation
             anim.SetBool("IsShooting", false);
-        }  
+        }
+
+        ChangeBulletExitPosition();
     }
 
     public IEnumerator Shoot()
@@ -88,11 +89,11 @@ public class PlayerShoot : MonoBehaviour
 
     void ChangeBulletExitPosition()
     {
-        if (direction == -1)
+        if (playerController.sprite.flipX == true)
             bulletExitPoint.transform.localPosition = new Vector3(-X_VECTOR, -Y_VECTOR, 0f);
-        
-        else      
+
+        else
             bulletExitPoint.transform.localPosition = new Vector3(X_VECTOR, -Y_VECTOR, 0f);
-    
+
     }
 }

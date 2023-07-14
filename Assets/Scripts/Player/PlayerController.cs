@@ -13,14 +13,13 @@ public class PlayerController : MonoBehaviour
     // X direction
     private float horizontalInput;
 
-
-
     [Header("Player Value")]
     public float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
 
     [Header("Partical Effect")]
     [SerializeField] private ParticleSystem dustEffect;
+    [SerializeField] private ParticleSystem jumpEffect;
 
     private void Awake()
     {
@@ -50,7 +49,8 @@ public class PlayerController : MonoBehaviour
             // Sprite left and right  move
             sprite.flipX = horizontalInput < 0 ? true : false;
 
-            CreateDustPartical(); // Partical Effect
+            // Partical Effect
+            CreateDustPartical();
 
             // Run Animation
             animator.SetBool("IsRunning", true);
@@ -65,7 +65,11 @@ public class PlayerController : MonoBehaviour
     {
         // Character Jump 
         if (Input.GetKeyDown(KeyCode.Space) && groundCheck.IsGrounded())
+        {
             rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce);
+            CreateJumpPartical(); // Partical Effect
+
+        }
     }
 
     private void JumpAnimation()
@@ -74,8 +78,6 @@ public class PlayerController : MonoBehaviour
         {
             // Jump Animation
             animator.SetBool("IsJumping", true);
-            // Partical Effect
-            CreateDustPartical();   
         }
         else
         {
@@ -88,7 +90,7 @@ public class PlayerController : MonoBehaviour
         if (rb2D.velocity.y < -.1f)
             // Fall Animation
             animator.SetBool("IsFalling", true);
-        
+
         else
             animator.SetBool("IsFalling", false);
     }
@@ -96,6 +98,10 @@ public class PlayerController : MonoBehaviour
     private void CreateDustPartical()
     {
         dustEffect.Play();
+    }
+    private void CreateJumpPartical()
+    {
+        jumpEffect.Play();
     }
 
 }
