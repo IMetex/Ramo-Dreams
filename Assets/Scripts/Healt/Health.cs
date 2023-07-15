@@ -28,7 +28,15 @@ public class Health : MonoBehaviour
         {
             // player dead
             animator.SetTrigger("IsDead");
+
+            // game oVer
         }
 
+    }
+
+    public void AddHealth(float _value)
+    {
+        // Collect Heart 
+        currentHealt = Mathf.Clamp(currentHealt + _value, 0, startingHealt);
     }
 }
