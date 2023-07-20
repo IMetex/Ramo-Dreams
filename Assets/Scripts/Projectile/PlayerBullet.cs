@@ -49,7 +49,20 @@ public class PlayerBullet : MonoBehaviour
         // Explosion trigger
         anim.SetTrigger("explode");
         boxCollider.enabled = false;
+
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        hit = true;
+        // Explosion trigger
+        anim.SetTrigger("explode");
+        boxCollider.enabled = false;
+
+        if (other.tag == "Enemy")
+            other.GetComponent<Health>().TakeDamage(1);
+    }
+    
     private void Deactivate()
     {
         // Expolisin Visibility

@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    [Header("Health")]
     [SerializeField] private float startingHealt;
+
+    [Header("Components")]
+    [SerializeField] private Behaviour[] components;
+
     public float currentHealt { get; private set; }
+
     private Animator animator;
+    public bool isDead; // GameOver
 
     private void Awake()
     {
@@ -26,10 +33,16 @@ public class Health : MonoBehaviour
         }
         else
         {
-            // player dead
-            animator.SetTrigger("IsDead");
+            if (!isDead)
+            {
+                animator.SetTrigger("IsDead");
 
-            // game oVer
+                //Deactivate all attached component classes
+                foreach (Behaviour component in components)
+                    component.enabled = false;
+
+                isDead = true;
+            }
         }
 
     }

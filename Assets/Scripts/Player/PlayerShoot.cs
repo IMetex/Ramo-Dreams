@@ -77,7 +77,7 @@ public class PlayerShoot : MonoBehaviour
         Vector3 bulletPosition = bulletExitPoint.position + new Vector3(direction, 0f, 0f);
 
         // Object Pooling Bullet
-        GameObject obj = objectPooling.GetPooledObject();
+        GameObject obj = objectPooling.GetPooledObject(0);
         obj.transform.position = bulletPosition;
         PlayerBullet bullet = obj.GetComponent<PlayerBullet>();
         bullet.SetDirection(direction);

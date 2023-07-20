@@ -10,6 +10,7 @@ public class Collectible : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            // Life Collectibles more for Look Healt Script
             other.GetComponent<Health>().AddHealth(healthValue);
             gameObject.SetActive(false);
         }
